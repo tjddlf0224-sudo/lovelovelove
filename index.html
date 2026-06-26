@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>여보, 생일 축하해 🤍</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Nanum+Myeongjo:wght@400;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ivory: #FBF6EE;
+    --cream: #F4EAD9;
+    --warm-white: #FFFDF9;
+    --terracotta: #C97B5E;
+    --dusty-rose: #D9A28E;
+    --sage: #8A9B7E;
+    --soft-sage: #B5C0A8;
+    --ink: #4A3F35;
+    --ink-soft: #7C6F62;
+    --gold: #C9A24B;
+    --petal: #E8B4A8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--ivory);
+    color: var(--ink);
+    font-family: 'Gowun Batang', serif;
+    overflow-x: hidden;
+    line-height: 1.7;
+  }
+
+  #petalCanvas {
+    position: fixed;
+    inset: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .petal-fx {
+    position: fixed;
+    pointer-events: none;
+    z-index: 999;
+    animation: petalFall linear forwards;
+    opacity: 0;
+  }
+  @keyframes petalFall {
+    0%   { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(110vh) rotate(540deg); opacity: 0; }
+  }
+
+  section {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 24px;
+    text-align: center;
+  }
+
+  #hero {
+    background:
+      radial-gradient(ellipse at 50% 30%, rgba(217,162,142,0.18) 0%, transparent 60%),
+      linear-gradient(180deg, var(--warm-white) 0%, var(--ivory) 100%);
+    gap: 24px;
+  }
+  .hero-eyebrow {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    letter-spacing: 0.5em;
+    color: var(--terracotta);
+    text-transform: uppercase;
+    opacity: 0;
+    animation: fadeUp 1.1s ease 0.2s forwards;
+  }
+  .hero-divider {
+    width: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--dusty-rose), transparent);
+    animation: lineGrow 1.4s ease 0.6s forwards;
+  }
+  @keyframes lineGrow { to { width: 120px; } }
+  .hero-title {
+    font-family: 'Nanum Myeongjo', serif;
+    font-weight: 800;
+    font-size: clamp(2.6rem, 9vw, 4.8rem);
+    line-height: 1.25;
+    color: var(--ink);
+    opacity: 0;
+    animation: fadeUp 1.1s ease 0.8s forwards;
+  }
+  .hero-title em { font-style: normal; color: var(--terracotta); }
+  .hero-sub {
+    font-size: clamp(0.95rem, 2.6vw, 1.15rem);
+    color: var(--ink-soft);
+    max-width: 440px;
+    line-height: 2;
+    opacity: 0;
+    animation: fadeUp 1.1s ease 1.2s forwards;
+  }
+  .scroll-hint {
+    position: absolute;
+    bottom: 36px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.3em;
+    color: var(--terracotta);
+    opacity: 0;
+    animation: fadeUp 1s ease 1.8s forwards, floaty 2.4s ease 2.8s infinite;
+  }
+  @keyframes floaty { 0%,100%{transform:translateY(0)} 50%{transform:translateY(8px)} }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:translateY(0)} }
+
+  .section-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.95rem;
+    letter-spacing: 0.45em;
+    color: var(--terracotta);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .section-title {
+    font-family: 'Nanum Myeongjo', serif;
+    font-weight: 700;
+    font-size: clamp(1.5rem, 4.5vw, 2.1rem);
+    color: var(--ink);
+    line-height: 1.5;
+    margin-bottom: 8px;
+  }
+
+  #cake-section { background: linear-gradient(180deg, var(--ivory) 0%, var(--cream) 100%); gap: 28px; }
+  .cake-wrapper { position: relative; cursor: pointer; user-select: none; margin-top: 8px; }
+  .cake-svg {
+    width: clamp(260px, 70vw, 420px);
+    height: auto;
+    display: block;
+    transition: transform 0.25s ease;
+    filter: drop-shadow(0 14px 30px rgba(201,123,94,0.28));
+  }
+  .cake-wrapper:hover .cake-svg { transform: scale(1.04) translateY(-4px); }
+
+  /* candle flames */
+  .flame { transform-origin: center bottom; animation: flicker 0.5s ease-in-out infinite alternate; }
+  .flame-2 { animation-delay: 0.12s; }
+  .flame-3 { animation-delay: 0.24s; }
+  @keyframes flicker {
+    0%   { transform: scaleY(1) scaleX(1) translateY(0); opacity:1; }
+    100% { transform: scaleY(1.12) scaleX(0.92) translateY(-1px); opacity:0.88; }
+  }
+  .flame-group { transition: opacity 0.5s ease, transform 0.5s ease; transform-origin: center bottom; }
+  .flame-group.out { opacity: 0; transform: translateY(-6px) scaleY(0.2); }
+  .smoke { opacity: 0; }
+  .smoke.show { animation: smokeRise 1.6s ease forwards; }
+  @keyframes smokeRise {
+    0%   { opacity: 0; transform: translateY(0) scale(0.6); }
+    25%  { opacity: 0.5; }
+    100% { opacity: 0; transform: translateY(-34px) scale(1.5); }
+  }
+  .candle-instruction { font-size: 0.95rem; color: var(--terracotta); letter-spacing: 0.08em; animation: pulse 2.2s ease infinite; }
+  @keyframes pulse { 0%,100%{opacity:0.55} 50%{opacity:1} }
+  .cake-done-msg { font-size: clamp(1rem, 3vw, 1.2rem); color: var(--ink-soft); line-height: 1.9; max-width: 400px; display: none; }
+
+  #letter-section { background: linear-gradient(180deg, var(--cream) 0%, var(--ivory) 100%); gap: 32px; }
+  .envelope-wrap { width: min(560px, 92vw); }
+  .letter-card {
+    background: var(--warm-white);
+    border-radius: 4px;
+    padding: 48px 40px;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.02), 0 18px 50px rgba(124,111,98,0.16);
+    position: relative; text-align: center; cursor: pointer;
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+    border: 1px solid rgba(201,123,94,0.12);
+  }
+  .letter-card.closed:hover { transform: translateY(-4px); box-shadow: 0 24px 60px rgba(124,111,98,0.22); }
+  .envelope-svg {
+    width: clamp(150px, 42vw, 200px);
+    height: auto;
+    display: block;
+    margin: 0 auto 18px;
+  }
+  .env-flap { transform-origin: 50% 38%; transition: transform 0.4s ease; }
+  .letter-card.closed:hover .env-flap { transform: rotateX(18deg); }
+  .env-heart-seal { transform-origin: center; animation: sealBeat 2.4s ease infinite; }
+  @keyframes sealBeat { 0%,100%{ transform: scale(1); } 50%{ transform: scale(1.08); } }
+  .envelope-icon { font-size: 3.2rem; margin-bottom: 14px; display:block; }
+  .envelope-hint { font-size: 0.85rem; letter-spacing: 0.18em; color: var(--terracotta); animation: pulse 2.2s ease infinite; }
+  .letter-content { display: none; text-align: left; cursor: default; }
+  .letter-content.open { display: block; animation: fadeUp 0.9s ease forwards; }
+  .letter-content::before { content:''; display:block; width:48px; height:1px; background:var(--dusty-rose); margin:0 auto 28px; }
+  .letter-greeting { font-family:'Nanum Myeongjo', serif; font-size:1.3rem; font-weight:700; color:var(--terracotta); margin-bottom:24px; text-align:center; }
+  .letter-body { font-size:clamp(0.95rem,2.5vw,1.05rem); line-height:2.3; color:var(--ink); white-space:pre-line; letter-spacing:0.01em; }
+  .letter-sign { margin-top:32px; font-family:'Nanum Myeongjo', serif; font-size:1rem; color:var(--ink-soft); text-align:right; font-weight:700; }
+  .letter-sign small { display:block; font-weight:400; font-size:0.85rem; margin-top:4px; color:var(--dusty-rose); }
+
+  #photos-section { background: linear-gradient(180deg, var(--ivory) 0%, var(--cream) 100%); gap: 32px; }
+  .photo-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; width:min(720px,94vw); }
+  .photo-card {
+    position:relative; aspect-ratio:1; border-radius:6px; overflow:hidden;
+    background:var(--warm-white); cursor:pointer;
+    box-shadow:0 6px 18px rgba(124,111,98,0.12);
+    transition:transform 0.35s ease, box-shadow 0.35s ease;
+    border:1px solid rgba(201,123,94,0.1);
+    opacity:0; transform:translateY(16px) scale(0.98);
+  }
+  .photo-card.shown { opacity:1; transform:translateY(0) scale(1); }
+  .photo-card:hover { transform:translateY(-4px); box-shadow:0 14px 34px rgba(124,111,98,0.22); z-index:2; }
+  .photo-card img { width:100%; height:100%; object-fit:cover; display:block; transition:transform 0.5s ease; }
+  .photo-card:hover img { transform:scale(1.06); }
+  .photo-caption {
+    position:absolute; bottom:0; left:0; right:0; padding:22px 10px 8px;
+    background:linear-gradient(transparent, rgba(74,63,53,0.7));
+    font-size:0.72rem; color:#fff; text-align:center; letter-spacing:0.03em;
+    opacity:0; transition:opacity 0.3s ease;
+  }
+  .photo-card:hover .photo-caption { opacity:1; }
+  .photo-note { font-size:0.82rem; color:var(--ink-soft); margin-top:-6px; }
+  @media (max-width:560px){ .photo-grid{ grid-template-columns:repeat(2,1fr); gap:9px; } }
+
+  #promise-section { background: linear-gradient(180deg, var(--cream) 0%, var(--ivory) 100%); gap: 36px; padding-bottom: 90px; }
+  .promises-list { display:flex; flex-direction:column; gap:16px; width:min(500px,92vw); }
+  .promise-item {
+    display:flex; align-items:flex-start; gap:18px; padding:22px 26px;
+    background:var(--warm-white); border-radius:6px;
+    box-shadow:0 6px 20px rgba(124,111,98,0.08);
+    border:1px solid rgba(201,123,94,0.1); text-align:left;
+    opacity:0; transform:translateY(22px);
+    transition:opacity 0.7s ease, transform 0.7s ease, box-shadow 0.3s ease;
+  }
+  .promise-item:hover { box-shadow:0 12px 28px rgba(124,111,98,0.16); }
+  .promise-item.visible { opacity:1; transform:translateY(0); }
+  .promise-num { font-family:'Cormorant Garamond', serif; font-size:2rem; color:var(--dusty-rose); line-height:1; flex-shrink:0; padding-top:2px; }
+  .promise-text { font-size:clamp(0.92rem,2.5vw,1rem); line-height:1.8; color:var(--ink); }
+  .promise-text small { display:block; font-size:0.82rem; color:var(--ink-soft); margin-top:4px; }
+
+  footer { position:relative; z-index:1; text-align:center; padding:40px 24px 56px; background:var(--ivory); color:var(--terracotta); }
+  .footer-heart { font-size:1.6rem; margin-bottom:12px; }
+  .footer-text { font-family:'Cormorant Garamond', serif; font-size:0.9rem; letter-spacing:0.15em; color:var(--ink-soft); }
+
+  .reveal { opacity:0; transform:translateY(30px); transition:opacity 0.9s ease, transform 0.9s ease; }
+  .reveal.visible { opacity:1; transform:translateY(0); }
+
+  .modal-overlay { display:none; position:fixed; inset:0; background:rgba(74,63,53,0.9); z-index:1000; align-items:center; justify-content:center; padding:24px; }
+  .modal-overlay.active { display:flex; }
+  .modal-img { max-width:90vw; max-height:82vh; border-radius:6px; object-fit:contain; box-shadow:0 20px 70px rgba(0,0,0,0.5); }
+  .modal-close { position:absolute; top:20px; right:26px; font-size:2rem; color:#fff; cursor:pointer; background:none; border:none; line-height:1; z-index:1002; }
+  .modal-nav {
+    position:absolute; top:50%; transform:translateY(-50%);
+    font-size:2.4rem; color:#fff; cursor:pointer; background:rgba(0,0,0,0.25);
+    border:none; width:54px; height:54px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center; line-height:1;
+    transition:background 0.2s ease; z-index:1002;
+  }
+  .modal-nav:hover { background:rgba(0,0,0,0.5); }
+  .modal-prev { left:16px; }
+  .modal-next { right:16px; }
+  .modal-cap { position:absolute; bottom:24px; left:0; right:0; text-align:center; color:#fff; font-size:0.9rem; letter-spacing:0.05em; text-shadow:0 1px 4px rgba(0,0,0,0.6); padding:0 16px; }
+  @media (max-width:480px){ .modal-nav{ width:44px; height:44px; font-size:1.8rem; } }
+
+  @media (max-width:480px) {
+    .letter-card { padding:36px 24px; }
+    .promise-item { padding:18px 20px; gap:14px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,*::before,*::after { animation-duration:0.01ms !important; transition-duration:0.01ms !important; }
+  }
+
+  /* ─── BGM BUTTON ─── */
+  .bgm-btn {
+    position: fixed;
+    top: 18px; right: 18px;
+    z-index: 1001;
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    border: 1px solid rgba(201,123,94,0.25);
+    background: rgba(255,253,249,0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 4px 16px rgba(124,111,98,0.18);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.25rem;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .bgm-btn:hover { transform: scale(1.08); box-shadow: 0 6px 22px rgba(124,111,98,0.28); }
+  .bgm-btn.playing { animation: bgmPulse 2.5s ease infinite; }
+  @keyframes bgmPulse {
+    0%,100% { box-shadow: 0 4px 16px rgba(201,123,94,0.25); }
+    50%      { box-shadow: 0 4px 22px rgba(201,123,94,0.5); }
+  }
+  .bgm-label {
+    position: fixed;
+    top: 22px; right: 76px;
+    z-index: 1001;
+    font-size: 0.78rem;
+    color: var(--terracotta);
+    background: rgba(255,253,249,0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    padding: 8px 14px;
+    border-radius: 20px;
+    border: 1px solid rgba(201,123,94,0.2);
+    letter-spacing: 0.05em;
+    animation: labelFade 5s ease forwards;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+  @keyframes labelFade {
+    0%,70% { opacity: 1; transform: translateX(0); }
+    100%   { opacity: 0; transform: translateX(8px); visibility: hidden; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="petalCanvas"></canvas>
+
+<!-- BGM -->
+<audio id="bgm" loop preload="auto">
+  <source src="bgm.mp3" type="audio/mpeg">
+</audio>
+<span class="bgm-label" id="bgmLabel">🎵 음악을 켜줘</span>
+<button class="bgm-btn" id="bgmBtn" onclick="toggleBgm()" aria-label="배경음악 켜기/끄기">🎵</button>
+
+<section id="hero">
+  <p class="hero-eyebrow">Happy Birthday</p>
+  <div class="hero-divider"></div>
+  <h1 class="hero-title">여보, <em>생일 축하해</em></h1>
+  <p class="hero-sub">
+    내가 요즘 빠져있는 코딩으로<br>
+    당신의 생일을 축하하고 싶었어.<br>
+    천천히 아래로 내려가 줄래?
+  </p>
+  <p class="scroll-hint">⌄ scroll ⌄</p>
+</section>
+
+<section id="cake-section">
+  <p class="section-label reveal">Mission 01</p>
+  <h2 class="section-title reveal">촛불을 불어서 꺼줘</h2>
+  <div class="cake-wrapper reveal" onclick="blowCandles()">
+    <svg class="cake-svg" id="cakeSvg" viewBox="0 0 320 300" xmlns="http://www.w3.org/2000/svg" aria-label="생일 케이크">
+      <!-- plate -->
+      <ellipse cx="160" cy="278" rx="128" ry="14" fill="#E7D6BF"/>
+      <ellipse cx="160" cy="274" rx="112" ry="11" fill="#F4EAD9"/>
+
+      <!-- bottom tier -->
+      <rect x="58" y="196" width="204" height="74" rx="14" fill="#F3D7C4"/>
+      <rect x="58" y="196" width="204" height="22" rx="11" fill="#EEC8AF"/>
+      <!-- bottom tier drips -->
+      <path d="M58 210 q12 26 24 0 q12 26 24 0 q12 26 24 0 q12 26 24 0 q12 26 24 0 q12 26 24 0 q12 26 24 0 q12 26 24 0 L262 196 L58 196 Z" fill="#FBF6EE"/>
+
+      <!-- top tier -->
+      <rect x="92" y="138" width="136" height="66" rx="13" fill="#F7E0D2"/>
+      <rect x="92" y="138" width="136" height="20" rx="10" fill="#F0CDBC"/>
+      <!-- top tier drips -->
+      <path d="M92 150 q11 24 22 0 q11 24 22 0 q11 24 22 0 q11 24 22 0 q11 24 22 0 q11 24 22 0 L228 138 L92 138 Z" fill="#FFFDF9"/>
+
+      <!-- cherries / dots on bottom tier -->
+      <circle cx="86" cy="236" r="6" fill="#D98A8A"/>
+      <circle cx="160" cy="244" r="6" fill="#D98A8A"/>
+      <circle cx="234" cy="236" r="6" fill="#D98A8A"/>
+      <circle cx="123" cy="240" r="4" fill="#C9A24B"/>
+      <circle cx="197" cy="240" r="4" fill="#C9A24B"/>
+
+      <!-- small hearts on top tier -->
+      <path d="M132 178 c-3-6-12-4-12 3 c0 5 12 11 12 11 c0 0 12-6 12-11 c0-7-9-9-12-3Z" fill="#D9A28E"/>
+      <path d="M188 178 c-3-6-12-4-12 3 c0 5 12 11 12 11 c0 0 12-6 12-11 c0-7-9-9-12-3Z" fill="#D9A28E"/>
+      <path d="M160 170 c-2.5-5-10-3.5-10 2.5 c0 4.5 10 9.5 10 9.5 c0 0 10-5 10-9.5 c0-6-7.5-7.5-10-2.5Z" fill="#C97B5E"/>
+
+      <!-- candles -->
+      <g id="candleGroup">
+        <!-- candle 1 -->
+        <rect x="116" y="98" width="9" height="44" rx="3" fill="#E8A0A0"/>
+        <rect x="116" y="98" width="9" height="44" rx="3" fill="url(#stripe1)" opacity="0.0"/>
+        <line x1="116" y1="110" x2="125" y2="106" stroke="#F4EAD9" stroke-width="3"/>
+        <line x1="116" y1="124" x2="125" y2="120" stroke="#F4EAD9" stroke-width="3"/>
+        <line x1="116" y1="138" x2="125" y2="134" stroke="#F4EAD9" stroke-width="3"/>
+        <!-- candle 2 (center) -->
+        <rect x="155.5" y="88" width="9" height="54" rx="3" fill="#C9A24B"/>
+        <line x1="155.5" y1="102" x2="164.5" y2="98" stroke="#FBF6EE" stroke-width="3"/>
+        <line x1="155.5" y1="116" x2="164.5" y2="112" stroke="#FBF6EE" stroke-width="3"/>
+        <line x1="155.5" y1="130" x2="164.5" y2="126" stroke="#FBF6EE" stroke-width="3"/>
+        <!-- candle 3 -->
+        <rect x="195" y="98" width="9" height="44" rx="3" fill="#A9B89C"/>
+        <line x1="195" y1="110" x2="204" y2="106" stroke="#F4EAD9" stroke-width="3"/>
+        <line x1="195" y1="124" x2="204" y2="120" stroke="#F4EAD9" stroke-width="3"/>
+        <line x1="195" y1="138" x2="204" y2="134" stroke="#F4EAD9" stroke-width="3"/>
+      </g>
+
+      <!-- smoke (shown after blow) -->
+      <g id="smokeGroup">
+        <circle class="smoke" id="smoke1" cx="120.5" cy="90" r="4" fill="#C9BBA8"/>
+        <circle class="smoke" id="smoke2" cx="160" cy="80" r="4" fill="#C9BBA8"/>
+        <circle class="smoke" id="smoke3" cx="199.5" cy="90" r="4" fill="#C9BBA8"/>
+      </g>
+
+      <!-- flames -->
+      <g id="flameGroup">
+        <g class="flame-group" id="fg1">
+          <ellipse class="flame flame-1" cx="120.5" cy="90" rx="5.5" ry="11" fill="#F6C453"/>
+          <ellipse class="flame flame-1" cx="120.5" cy="93" rx="3" ry="6.5" fill="#F08A4B"/>
+        </g>
+        <g class="flame-group" id="fg2">
+          <ellipse class="flame flame-2" cx="160" cy="78" rx="6" ry="12.5" fill="#F6C453"/>
+          <ellipse class="flame flame-2" cx="160" cy="81" rx="3.2" ry="7.5" fill="#F08A4B"/>
+        </g>
+        <g class="flame-group" id="fg3">
+          <ellipse class="flame flame-3" cx="199.5" cy="90" rx="5.5" ry="11" fill="#F6C453"/>
+          <ellipse class="flame flame-3" cx="199.5" cy="93" rx="3" ry="6.5" fill="#F08A4B"/>
+        </g>
+      </g>
+    </svg>
+  </div>
+  <p class="candle-instruction reveal" id="candleInstr">케이크를 눌러봐 ✶</p>
+  <p class="cake-done-msg reveal" id="cakeDoneMsg">
+    소원은 빌었어? 🤍<br>
+    당신이 바란 거, 전부 이루어지길.
+  </p>
+</section>
+
+<section id="letter-section">
+  <p class="section-label reveal">Mission 02</p>
+  <h2 class="section-title reveal">편지를 열어봐</h2>
+
+  <div class="envelope-wrap reveal">
+    <div class="letter-card closed" id="letterClosed" onclick="openLetter()">
+      <svg class="envelope-svg" viewBox="0 0 200 150" xmlns="http://www.w3.org/2000/svg" aria-label="편지 봉투">
+        <!-- body -->
+        <rect x="14" y="34" width="172" height="108" rx="10" fill="#F7E0D2"/>
+        <rect x="14" y="34" width="172" height="108" rx="10" fill="none" stroke="#E0B49E" stroke-width="1.5"/>
+        <!-- inner fold lines -->
+        <path d="M14 44 L100 100 L186 44" fill="none" stroke="#E0B49E" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M14 138 L74 92" fill="none" stroke="#EBC8B4" stroke-width="1.5"/>
+        <path d="M186 138 L126 92" fill="none" stroke="#EBC8B4" stroke-width="1.5"/>
+        <!-- a peeking letter -->
+        <rect x="46" y="22" width="108" height="60" rx="4" fill="#FFFDF9" stroke="#EADBC4" stroke-width="1"/>
+        <line x1="60" y1="38" x2="140" y2="38" stroke="#E4CBB4" stroke-width="2" stroke-linecap="round"/>
+        <line x1="60" y1="50" x2="140" y2="50" stroke="#EAD7C4" stroke-width="2" stroke-linecap="round"/>
+        <line x1="60" y1="62" x2="116" y2="62" stroke="#EAD7C4" stroke-width="2" stroke-linecap="round"/>
+        <!-- top flap -->
+        <path class="env-flap" d="M14 40 a10 10 0 0 1 10-6 H176 a10 10 0 0 1 10 6 L100 98 Z" fill="#F0CDBC" stroke="#E0B49E" stroke-width="1.5" stroke-linejoin="round"/>
+        <!-- heart seal -->
+        <g class="env-heart-seal">
+          <circle cx="100" cy="74" r="15" fill="#C97B5E"/>
+          <path d="M100 81 C93 74 89 69 93 65 C96.5 61.5 100 65 100 67.5 C100 65 103.5 61.5 107 65 C111 69 107 74 100 81 Z" fill="#FBF6EE"/>
+        </g>
+      </svg>
+      <p class="envelope-hint">눌러서 편지 열기</p>
+    </div>
+
+    <div class="letter-card" id="letterOpen" style="display:none;">
+      <div class="letter-content open">
+        <p class="letter-greeting">사랑하는 여보에게</p>
+        <p class="letter-body">여보, 오늘은 당신의 생일이야.
+이번엔 내가 요즘 푹 빠져있는 코딩으로, 당신의 생일을 축하해 주고 싶었어.
+
+우리 아기들 키우느라 늘 고생 많아.
+나는 다 알아. 아이들 안고 집안일 하느라 팔꿈치가 아픈 것도, 우리 아이들 안아주고 업어주다가 허리가 아픈 것도.
+그걸 볼 때마다 내 마음도 아프고, 또 너무 고마워.
+
+내가 더 많이 할게.
+변하지 않을게.
+당신을 사랑하는 마음도, 당신을 걱정하는 마음도, 내가 더 희생하고 싶은 이 마음도 — 그대로 계속 지킬게.
+
+그래도 이건 꼭 알아줬으면 좋겠어.
+당신을 향한 내 사랑은 시간이 지날수록 점점 더 커지고 있어.
+조금도 작아지거나 무뎌지지 않았어.
+정말, 정말 많이 사랑해.
+
+오늘은 생일이니까, 마음껏 즐겁게 놀자.
+우리 행복하게 지내자.
+앞으로도 내가 당신을 많이많이 행복하게 해줄게.
+
+사랑해, 여보. 🤍</p>
+        <p class="letter-sign">당신의 남편이<br><small>매일 더 사랑하는 마음으로</small></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="photos-section">
+  <p class="section-label reveal">Our Moments</p>
+  <h2 class="section-title reveal">우리가 함께한 순간들</h2>
+
+  <div class="photo-grid reveal" id="photoGrid"></div>
+  <p class="photo-note reveal">사진을 누르면 크게 볼 수 있어 · 좌우로 넘겨봐</p>
+</section>
+
+<section id="promise-section">
+  <p class="section-label reveal">My Promises</p>
+  <h2 class="section-title reveal">앞으로 내가 꼭 지킬게</h2>
+
+  <div class="promises-list" id="promiseList">
+    <div class="promise-item">
+      <span class="promise-num">01</span>
+      <p class="promise-text">집안일도 육아도 내가 더 많이 할게.<small>당신 팔꿈치, 허리, 이제 내가 덜어줄게.</small></p>
+    </div>
+    <div class="promise-item">
+      <span class="promise-num">02</span>
+      <p class="promise-text">더 자주 "사랑해"라고 말할게.<small>마음에만 담아두지 않고, 매일 표현할게.</small></p>
+    </div>
+    <div class="promise-item">
+      <span class="promise-num">03</span>
+      <p class="promise-text">당신 손, 오래오래 잡고 함께 걸을게.<small>늙어서도 지금처럼 같이.</small></p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-heart">🤍</div>
+  <p class="footer-text">Made with love, just for you · 여보 생일 축하해</p>
+</footer>
+
+<div class="modal-overlay" id="modalOverlay">
+  <button class="modal-close" onclick="closeModal()" aria-label="닫기">✕</button>
+  <button class="modal-nav modal-prev" onclick="modalNav(-1)" aria-label="이전">‹</button>
+  <img class="modal-img" id="modalImg" src="" alt="">
+  <button class="modal-nav modal-next" onclick="modalNav(1)" aria-label="다음">›</button>
+  <p class="modal-cap" id="modalCap"></p>
+</div>
+
+<script>
+const canvas=document.getElementById('petalCanvas');
+const ctx=canvas.getContext('2d');
+let petals=[];
+const petalColors=['rgba(232,180,168,0.55)','rgba(217,162,142,0.5)','rgba(244,234,217,0.7)','rgba(181,192,168,0.4)'];
+function resize(){ canvas.width=innerWidth; canvas.height=innerHeight; }
+function initPetals(){
+  petals=[];
+  const count=innerWidth<600?14:24;
+  for(let i=0;i<count;i++){
+    petals.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*5+3,speedY:Math.random()*0.4+0.2,speedX:Math.random()*0.4-0.2,sway:Math.random()*Math.PI*2,color:petalColors[Math.floor(Math.random()*petalColors.length)]});
+  }
+}
+function drawPetals(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  petals.forEach(p=>{
+    p.y+=p.speedY; p.sway+=0.01; p.x+=p.speedX+Math.sin(p.sway)*0.3;
+    if(p.y>canvas.height+10){ p.y=-10; p.x=Math.random()*canvas.width; }
+    if(p.x>canvas.width+10) p.x=-10;
+    if(p.x<-10) p.x=canvas.width+10;
+    ctx.beginPath();
+    ctx.ellipse(p.x,p.y,p.r,p.r*0.6,p.sway,0,Math.PI*2);
+    ctx.fillStyle=p.color; ctx.fill();
+  });
+  requestAnimationFrame(drawPetals);
+}
+resize(); initPetals(); drawPetals();
+addEventListener('resize',()=>{ resize(); initPetals(); });
+
+const fxSymbols=['🌸','🌷','🤍','✨','🍃'];
+function spawnPetals(count=40){
+  for(let i=0;i<count;i++){
+    setTimeout(()=>{
+      const el=document.createElement('div');
+      el.className='petal-fx';
+      el.textContent=fxSymbols[Math.floor(Math.random()*fxSymbols.length)];
+      el.style.left=Math.random()*100+'vw';
+      el.style.top='-30px';
+      const dur=Math.random()*2.5+2.5;
+      el.style.animationDuration=dur+'s';
+      el.style.fontSize=(Math.random()*1.1+0.9)+'rem';
+      document.body.appendChild(el);
+      setTimeout(()=>el.remove(),dur*1000+100);
+    },i*70);
+  }
+}
+
+const bgm=document.getElementById('bgm');
+const bgmBtn=document.getElementById('bgmBtn');
+let bgmStarted=false;
+
+function toggleBgm(){
+  if(bgm.paused){
+    bgm.play().then(()=>{
+      bgmBtn.textContent='🔊';
+      bgmBtn.classList.add('playing');
+    }).catch(()=>{});
+  } else {
+    bgm.pause();
+    bgmBtn.textContent='🎵';
+    bgmBtn.classList.remove('playing');
+  }
+}
+
+// try to start music gently on first interaction anywhere
+function tryStartBgm(){
+  if(bgmStarted) return;
+  bgm.play().then(()=>{
+    bgmStarted=true;
+    bgmBtn.textContent='🔊';
+    bgmBtn.classList.add('playing');
+  }).catch(()=>{});
+}
+['click','touchstart','scroll'].forEach(ev=>{
+  document.addEventListener(ev, tryStartBgm, { once:false, passive:true });
+});
+
+let blown=false;
+function blowCandles(){
+  if(blown) return; blown=true;
+  const flames=['fg1','fg2','fg3'];
+  const smokes=['smoke1','smoke2','smoke3'];
+  // extinguish flames one by one
+  flames.forEach((id,i)=>{
+    setTimeout(()=>{
+      document.getElementById(id).classList.add('out');
+      document.getElementById(smokes[i]).classList.add('show');
+    }, i*180);
+  });
+  const instr=document.getElementById('candleInstr');
+  const done=document.getElementById('cakeDoneMsg');
+  setTimeout(()=>{
+    instr.style.display='none';
+    done.style.display='block';
+    spawnPetals(50);
+  }, 900);
+}
+
+let opened=false;
+function openLetter(){
+  if(opened) return; opened=true;
+  const closed=document.getElementById('letterClosed');
+  const open=document.getElementById('letterOpen');
+  closed.style.transition='all 0.4s ease';
+  closed.style.transform='scale(0.96)';
+  closed.style.opacity='0';
+  setTimeout(()=>{
+    closed.style.display='none';
+    open.style.display='block';
+    spawnPetals(24);
+  },400);
+}
+
+// ─── PHOTO GALLERY ───
+const photos = [
+  { src:'photos/photo1.jpg',  cap:'하늘 위에서, 손 꼭 잡고' },
+  { src:'photos/photo2.jpg',  cap:'빛나던 연등 축제의 밤' },
+  { src:'photos/photo3.jpg',  cap:'함께 떠난 여행' },
+  { src:'photos/photo4.jpg',  cap:'우리의 시작' },
+  { src:'photos/photo5.jpg',  cap:'볼 맞대고 활짝' },
+  { src:'photos/photo6.jpg',  cap:'어디로 가든 함께' },
+  { src:'photos/photo7.jpg',  cap:'나란히 앉아서' },
+  { src:'photos/photo8.jpg',  cap:'사랑이 가득했던 날' },
+  { src:'photos/photo9.jpg',  cap:'장난치며 웃던 날' },
+  { src:'photos/photo10.jpg', cap:'맛있는 거 먹으러' },
+  { src:'photos/photo11.jpg', cap:'반짝이던 그 겨울밤' },
+  { src:'photos/photo12.jpg', cap:'동심으로 돌아간 하루' },
+  { src:'photos/photo13.jpg', cap:'도시가 한눈에' },
+  { src:'photos/photo14.jpg', cap:'수다 떨던 저녁' },
+  { src:'photos/photo15.jpg', cap:'우리, 대한민국' },
+  { src:'photos/photo16.jpg', cap:'특별했던 어느 날' },
+  { src:'photos/photo17.jpg', cap:'제주의 봄' },
+  { src:'photos/photo18.jpg', cap:'마주보며 웃던 순간' },
+  { src:'photos/photo19.jpg', cap:'스쿠터 타고 제주 한 바퀴' },
+];
+
+const grid = document.getElementById('photoGrid');
+photos.forEach((p, i) => {
+  const card = document.createElement('div');
+  card.className = 'photo-card';
+  card.innerHTML = `<img src="${p.src}" alt="${p.cap}" loading="lazy"><p class="photo-caption">${p.cap}</p>`;
+  card.addEventListener('click', () => openModal(i));
+  grid.appendChild(card);
+});
+
+// staggered reveal
+const cardEls = grid.querySelectorAll('.photo-card');
+const gridObs = new IntersectionObserver(es=>{
+  es.forEach(e=>{
+    if(e.isIntersecting){
+      cardEls.forEach((c,i)=> setTimeout(()=>c.classList.add('shown'), i*50));
+      gridObs.unobserve(e.target);
+    }
+  });
+},{threshold:0.05});
+gridObs.observe(grid);
+
+// ─── MODAL ───
+let modalIndex = 0;
+function openModal(i){
+  modalIndex = i;
+  updateModal();
+  document.getElementById('modalOverlay').classList.add('active');
+}
+function updateModal(){
+  document.getElementById('modalImg').src = photos[modalIndex].src;
+  document.getElementById('modalImg').alt = photos[modalIndex].cap;
+  document.getElementById('modalCap').textContent = photos[modalIndex].cap;
+}
+function modalNav(dir){
+  modalIndex = (modalIndex + dir + photos.length) % photos.length;
+  updateModal();
+}
+function closeModal(){ document.getElementById('modalOverlay').classList.remove('active'); }
+document.getElementById('modalOverlay').addEventListener('click', e=>{
+  if(e.target.id === 'modalOverlay') closeModal();
+});
+addEventListener('keydown', e=>{
+  if(!document.getElementById('modalOverlay').classList.contains('active')) return;
+  if(e.key==='Escape') closeModal();
+  if(e.key==='ArrowLeft') modalNav(-1);
+  if(e.key==='ArrowRight') modalNav(1);
+});
+
+const obs=new IntersectionObserver(es=>{
+  es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('visible'); obs.unobserve(e.target); } });
+},{threshold:0.15});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+const pObs=new IntersectionObserver(es=>{
+  es.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.querySelectorAll('.promise-item').forEach((it,i)=>{
+        setTimeout(()=>it.classList.add('visible'),i*150);
+      });
+      pObs.unobserve(e.target);
+    }
+  });
+},{threshold:0.1});
+const pl=document.getElementById('promiseList');
+if(pl) pObs.observe(pl);
+</script>
+</body>
+</html>
