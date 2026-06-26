@@ -671,14 +671,19 @@ const photos = [
   { src:'photo31.jpeg', cap:'해바라기밭의 우리 가족' },
   { src:'photo32.jpeg', cap:'바다 곁에서, 셋이서' },
   { src:'photo33.jpeg', cap:'오키나와의 추억' },
-  { src:'photo34.jpeg', cap:'우리 가족, 함께' },
+  { src:'photo34.jpeg', cap:'' },
+  { src:'photo36.jpeg', cap:'' },
+  { src:'photo37.jpeg', cap:'' },
+  { src:'photo38.jpeg', cap:'' },
+  { src:'photo39.jpeg', cap:'' },
+  { src:'photo40.jpeg', cap:'' },
 ];
 
 const grid = document.getElementById('photoGrid');
 photos.forEach((p, i) => {
   const card = document.createElement('div');
   card.className = 'photo-card';
-  card.innerHTML = `<img src="${p.src}" alt="${p.cap}" loading="lazy"><p class="photo-caption">${p.cap}</p>`;
+  card.innerHTML = `<img src="${p.src}" alt="우리의 순간" loading="lazy">`;
   card.addEventListener('click', () => openModal(i));
   grid.appendChild(card);
 });
@@ -704,8 +709,8 @@ function openModal(i){
 }
 function updateModal(){
   document.getElementById('modalImg').src = photos[modalIndex].src;
-  document.getElementById('modalImg').alt = photos[modalIndex].cap;
-  document.getElementById('modalCap').textContent = photos[modalIndex].cap;
+  document.getElementById('modalImg').alt = '우리의 순간';
+  document.getElementById('modalCap').textContent = '';
 }
 function modalNav(dir){
   modalIndex = (modalIndex + dir + photos.length) % photos.length;
